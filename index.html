@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sağlıklı ve Sağlıksız Arkadaşlıklar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Plus+Jakarta+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        heading: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#0284C7', // Sky Blue 600
+                        'secondary': '#10B981', // Emerald 500
+                        'danger': '#EF4444', // Red 500
+                        'accent': '#8B5CF6', // Violet 500
+                        'personal': '#F59E0B', // Amber 500
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f1f5f9;
+            background-image: 
+                radial-gradient(circle at 100% 0%, #e0f2fe 0%, transparent 20%),
+                radial-gradient(circle at 0% 100%, #ede9fe 0%, transparent 20%),
+                radial-gradient(#cbd5e1 1px, transparent 1px);
+            background-size: 100% 100%, 100% 100%, 24px 24px;
+            background-attachment: fixed;
+        }
+        .step-card {
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .step-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .hidden-section {
+            display: none;
+        }
+        .fade-in {
+            animation: fadeIn 0.6s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .reveal-content {
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.6s ease-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .reveal-content.show {
+            max-height: 800px;
+            opacity: 1;
+        }
+        @keyframes pulse-danger {
+            0%, 100% { background-color: #fee2e2; border-color: #fca5a5; }
+            50% { background-color: #ef4444; color: white; border-color: #ef4444; }
+        }
+        .timer-finished {
+            animation: pulse-danger 1.5s infinite;
+        }
+        /* Custom Scrollbar for Scenarios */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f5f9; 
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-200 sticky top-0 z-50">
+        <!-- Colorful Top Accent Bar -->
+        <div class="h-1.5 w-full bg-gradient-to-r from-primary via-accent to-secondary"></div>
+        
+        <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-4">
+                <div class="bg-gradient-to-br from-primary to-blue-800 text-white p-2.5 rounded-xl shadow-md">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-xl font-heading font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-600">Sağlıklı ve Sağlıksız Arkadaşlıklar</h1>
+                    <p class="text-xs font-semibold text-primary tracking-wide uppercase">Süre: 40 Dakika</p>
+                </div>
+            </div>
+            
+            <!-- Dynamic Navigation -->
+            <div class="flex space-x-2 bg-slate-100/80 p-1.5 rounded-full overflow-x-auto w-full md:w-auto" id="nav-container">
+                <button onclick="showSection('intro')" id="nav-intro" class="px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap">1. Keşfetme</button>
+                <button onclick="showSection('method')" id="nav-method" class="px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap">2. NDS Tekniği</button>
+                <button onclick="showSection('practice')" id="nav-practice" class="px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap">3. Senaryo Analizi</button>
+                <button onclick="showSection('exit')" id="nav-exit" class="px-4 py-2 rounded-full text-sm font-bold transition-all whitespace-nowrap">4. Kapanış</button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 relative">
+
+        <!-- SECTION 1: KEŞFETME -->
+        <section id="section-intro" class="fade-in">
+            <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 relative overflow-hidden mb-8">
+                <!-- Decorative background shape -->
+                <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-50 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
+                
+                <!-- Timer & Code -->
+                <div class="flex justify-between items-start mb-8 pb-6 border-b border-slate-100 relative z-10">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-slate-50 rounded-xl p-2.5 flex items-center space-x-3 border border-slate-200 shadow-sm" id="timer-box-intro">
+                            <div class="text-center px-2">
+                                <span class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kalan Süre</span>
+                                <span id="timer-display-intro" class="text-2xl font-mono font-extrabold text-primary">10:00</span>
+                            </div>
+                            <div class="flex flex-col space-y-1.5 border-l border-slate-200 pl-3">
+                                <div class="flex space-x-1">
+                                    <button onclick="adjustTimer('intro', 1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition" title="+1 Dakika">▲</button>
+                                    <button onclick="adjustTimer('intro', -1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition" title="-1 Dakika">▼</button>
+                                </div>
+                                <button onclick="toggleTimer('intro')" id="timer-btn-intro" class="bg-primary text-white w-full py-1 rounded-md text-xs font-bold hover:bg-blue-700 shadow-sm transition">Başlat</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-right">
+                        <span class="bg-blue-100 text-blue-700 px-4 py-1.5 rounded-full text-xs font-extrabold tracking-widest uppercase inline-block mb-2 shadow-sm">Bölüm 1: Keşfetme</span>
+                        <div class="hidden md:flex bg-white text-slate-500 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 shadow-sm items-center justify-end">
+                            <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Öğrenci Sayfa: 3.3.1
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8 relative z-10 text-center max-w-3xl mx-auto">
+                    <h2 class="text-4xl font-heading font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 mb-4">Sağlıklı ve Sağlıksız İlişkiler</h2>
+                    <p class="text-slate-500 text-lg">Hangi davranışlar bir ilişkiyi sağlıklı, hangi davranışlar sağlıksız yapar? Aralarındaki farkları inceleyelim.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
+                    <!-- Sağlıklı İlişki -->
+                    <div class="bg-gradient-to-br from-white to-emerald-50 p-8 rounded-3xl border border-emerald-100 shadow-lg relative transform transition duration-500 hover:-translate-y-1 hover:shadow-xl">
+                        <div class="absolute -top-6 right-8 w-16 h-16 bg-gradient-to-br from-emerald-400 to-secondary text-white rounded-2xl shadow-lg flex items-center justify-center text-3xl transform rotate-3">👍</div>
+                        <h3 class="text-2xl font-heading font-extrabold text-emerald-700 mb-6 flex items-center">
+                            <span class="bg-emerald-100 text-emerald-600 p-2 rounded-lg mr-3">✨</span> Sağlıklı İlişki
+                        </h3>
+                        <p class="font-bold text-slate-700 mb-4 bg-white/60 py-1 px-3 rounded-md inline-block">İki kişi de:</p>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirlerine güven ve saygı duyar, destek olur.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Emniyette, kendini güvende ve rahat hisseder.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirlerine asla şiddet uygulamaz.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Alay etmez, isim takmaz. Birlikte olmaktan keyif alır.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirinin hayatı, dersleri, arkadaşları, ailesi ile ilgilenir.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Açık ve net bir iletişimi vardır.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Riskli konularda (madde vb.) sağlıklı kararlar verir.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirini olumlu hedefler oluşturmaya teşvik eder.</span></li>
+                        </ul>
+                    </div>
+
+                    <!-- Sağlıksız İlişki -->
+                    <div class="bg-gradient-to-br from-white to-red-50 p-8 rounded-3xl border border-red-100 shadow-lg relative transform transition duration-500 hover:-translate-y-1 hover:shadow-xl">
+                        <div class="absolute -top-6 right-8 w-16 h-16 bg-gradient-to-br from-red-400 to-danger text-white rounded-2xl shadow-lg flex items-center justify-center text-3xl transform -rotate-3">👎</div>
+                        <h3 class="text-2xl font-heading font-extrabold text-red-700 mb-6 flex items-center">
+                            <span class="bg-red-100 text-red-600 p-2 rounded-lg mr-3">⚠️</span> Sağlıksız İlişki
+                        </h3>
+                        <p class="font-bold text-slate-700 mb-4 bg-white/60 py-1 px-3 rounded-md inline-block">Bir veya daha çok kişi:</p>
+                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Diğerini kontrol ve yönetmek ister.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Sürekli diğerini kötü ve yetersiz hissettirir.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Diğerini dinlemez, özel hayatı ile ilgilenmez.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Kendi isteklerini ve kurallarını dikte ettirir.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Aşırı kıskançtır ve fazlasıyla sahiplenicidir.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Başkalarını kıskanır ve acımasızca eleştirir.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>İter, vurur, cisimlere veya çevreye zarar verir.</span></li>
+                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Riskli ve zararlı eylemlere dahil olmaya zorlar.</span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Discussion Guide -->
+                <div class="mt-10 bg-gradient-to-r from-amber-50 to-yellow-100 rounded-2xl p-8 border border-amber-200 shadow-sm relative">
+                    <div class="absolute -left-3 top-8 w-6 h-12 bg-amber-400 rounded-r-lg"></div>
+                    <div class="flex items-center mb-5 ml-4">
+                        <div class="bg-amber-200 p-2 rounded-lg mr-3 shadow-sm">
+                            <svg class="w-6 h-6 text-amber-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8h2a2 2 0 012 2v6a2 2 0 01-2 2h-2v4l-4-4H9a1.994 1.994 0 01-1.414-.586m0 0L11 14h4a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2v4l.586-.586z"></path></svg>
+                        </div>
+                        <h3 class="text-xl font-bold text-amber-900">Sınıf Tartışma Rehberi</h3>
+                    </div>
+                    <ul class="space-y-4 text-slate-800 ml-4 font-medium text-lg">
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 bg-red-100 text-danger text-xs font-bold px-2 py-1 rounded mr-3 mt-0.5 shadow-sm">SORU</span>
+                            <span>Sizin kendi düşünceleriniz ile buradaki tabloda yazanlar arasında ne gibi farklar var?</span>
+                        </li>
+                        <li class="flex items-start">
+                            <span class="flex-shrink-0 bg-red-100 text-danger text-xs font-bold px-2 py-1 rounded mr-3 mt-0.5 shadow-sm">SORU</span>
+                            <span>Bir ilişkinin sağlıklı veya sağlıksız olduğunu en çabuk nasıl anlarsınız?</span>
+                        </li>
+                    </ul>
+                </div>
+
+                <!-- Hidden Conclusion Message -->
+                <div class="mt-10 border-t border-slate-100 pt-8 flex flex-col items-center">
+                    <button onclick="toggleContent('intro-conclusion', this)" class="group bg-white border-2 border-primary text-primary px-8 py-3 rounded-full font-bold shadow hover:bg-primary hover:text-white transition-all flex items-center space-x-3">
+                        <span class="text-xl group-hover:scale-110 transition-transform">👁️</span>
+                        <span>Öğretmen Notunu Göster</span>
+                    </button>
+                    <div id="intro-conclusion" class="reveal-content w-full max-w-4xl mt-6">
+                        <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 text-center shadow-xl relative overflow-hidden">
+                            <div class="absolute opacity-10 -right-10 -bottom-10 text-9xl">📝</div>
+                            <p class="text-white text-xl leading-relaxed font-semibold relative z-10">
+                                "Mükemmel arkadaş diye bir şey yoktur; ancak sağlıklı arkadaşlık ilişkileri <span class="bg-white/20 px-2 py-0.5 rounded">saygı, dürüstlük, güven ve açık iletişim</span> üzerine kuruludur. Eğer bir ilişkide zorbalık, yalan, şiddet varsa veya sizi zarar göreceğiniz durumların içine çekiyorsa, bu ilişki kesinlikle sağlıksızdır."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex justify-end">
+                    <button onclick="showSection('method')" class="bg-gradient-to-r from-primary to-blue-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center">
+                        Sonraki Adım: NDS Tekniği 
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: YÖNTEM ÖĞRENİMİ (NDS) -->
+        <section id="section-method" class="hidden-section fade-in">
+            <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 relative overflow-hidden mb-8">
+                
+                <!-- Timer & Code -->
+                <div class="flex justify-between items-start mb-8 pb-6 border-b border-slate-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-slate-50 rounded-xl p-2.5 flex items-center space-x-3 border border-slate-200 shadow-sm" id="timer-box-method">
+                            <div class="text-center px-2">
+                                <span class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kalan Süre</span>
+                                <span id="timer-display-method" class="text-2xl font-mono font-extrabold text-accent">10:00</span>
+                            </div>
+                            <div class="flex flex-col space-y-1.5 border-l border-slate-200 pl-3">
+                                <div class="flex space-x-1">
+                                    <button onclick="adjustTimer('method', 1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition">▲</button>
+                                    <button onclick="adjustTimer('method', -1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition">▼</button>
+                                </div>
+                                <button onclick="toggleTimer('method')" id="timer-btn-method" class="bg-accent text-white w-full py-1 rounded-md text-xs font-bold hover:bg-purple-700 shadow-sm transition">Başlat</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-purple-100 text-purple-700 px-4 py-1.5 rounded-full text-xs font-extrabold tracking-widest uppercase inline-block mb-2 shadow-sm">Bölüm 2: İlişkilendirme</span>
+                        <div class="hidden md:flex bg-white text-slate-500 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 shadow-sm items-center justify-end">
+                            <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Öğrenci Sayfa: 3.3.2
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Story Box -->
+                <div class="bg-slate-800 rounded-3xl p-8 shadow-xl relative overflow-hidden mb-12">
+                    <div class="absolute opacity-10 top-0 right-0 w-64 h-64 bg-white rounded-full mix-blend-overlay filter blur-3xl transform translate-x-1/2 -translate-y-1/2"></div>
+                    <div class="flex items-start">
+                        <div class="text-6xl mr-6 bg-slate-700 p-4 rounded-2xl shadow-inner">🏪</div>
+                        <div>
+                            <h3 class="font-heading font-extrabold text-2xl text-white mb-3">Örnek Olay: Kasiyer</h3>
+                            <p class="text-slate-200 text-xl leading-relaxed font-serif">
+                                "Büyük bir spor malzemeleri dükkanında kasiyersiniz. En iyi arkadaşınız çalıştığınız dükkana gelerek <span class="bg-danger text-white px-2 py-1 rounded font-sans font-bold shadow-sm">çalıntı bir kredi kartıyla</span> hem kendisi hem de sizin için alışveriş yapmak istiyor."
+                            </p>
+                            <p class="text-sm text-slate-400 mt-4 border-l-2 border-slate-600 pl-3">Arkadaşlarımızla içine girdiğimiz durumların sağlıklı olup olmadığına karar vermek her zaman kolay değildir. Gelin bunu analiz edelim.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-10">
+                    <h3 class="text-3xl font-heading font-black text-transparent bg-clip-text bg-gradient-to-r from-accent to-fuchsia-500 inline-block">NDS Tekniği</h3>
+                    <p class="text-slate-500 mt-2 font-medium">Baskı anında doğru kararı vermek için bu üç adımı izleyin.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 relative">
+                    <!-- Connector Line (Desktop) -->
+                    <div class="hidden md:block absolute top-1/2 left-10 right-10 h-1 bg-gradient-to-r from-blue-200 via-amber-200 to-emerald-200 transform -translate-y-1/2 z-0"></div>
+
+                    <!-- N -->
+                    <div class="step-card bg-white border border-slate-100 p-8 rounded-3xl shadow-lg relative z-10">
+                        <div class="w-20 h-20 mx-auto bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-4xl shadow-xl shadow-blue-200 mb-6 text-white border-4 border-white">👁️</div>
+                        <h4 class="text-2xl font-heading font-bold text-slate-800 mb-4 text-center">Netleştirin</h4>
+                        <ul class="text-slate-600 text-left space-y-3 font-medium">
+                            <li class="flex items-start"><span class="text-blue-500 mr-2 mt-0.5">•</span> Sizden tam olarak ne yapmanız isteniyor?</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2 mt-0.5">•</span> Kiminle?</li>
+                            <li class="flex items-start"><span class="text-blue-500 mr-2 mt-0.5">•</span> Ne zaman ve nerede?</li>
+                        </ul>
+                    </div>
+
+                    <!-- D -->
+                    <div class="step-card bg-white border border-slate-100 p-8 rounded-3xl shadow-lg relative z-10">
+                        <div class="w-20 h-20 mx-auto bg-gradient-to-br from-amber-400 to-amber-600 rounded-full flex items-center justify-center text-4xl shadow-xl shadow-amber-200 mb-6 text-white border-4 border-white">💡</div>
+                        <h4 class="text-2xl font-heading font-bold text-slate-800 mb-4 text-center">Düşünün</h4>
+                        <ul class="text-slate-600 text-left space-y-3 font-medium">
+                            <li class="flex items-start"><span class="text-amber-500 mr-2 mt-0.5">•</span> Evet ya da Hayır derseniz ne olacak?</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2 mt-0.5">•</span> Muhtemel sonuçlar neler?</li>
+                            <li class="flex items-start"><span class="text-amber-500 mr-2 mt-0.5">•</span> Bu sonuçlardan kimler, nasıl etkilenecek?</li>
+                        </ul>
+                    </div>
+
+                    <!-- S -->
+                    <div class="step-card bg-white border border-slate-100 p-8 rounded-3xl shadow-lg relative z-10">
+                        <div class="w-20 h-20 mx-auto bg-gradient-to-br from-emerald-400 to-secondary rounded-full flex items-center justify-center text-4xl shadow-xl shadow-emerald-200 mb-6 text-white border-4 border-white">🎯</div>
+                        <h4 class="text-2xl font-heading font-bold text-slate-800 mb-4 text-center">Seçim Yapın</h4>
+                        <ul class="text-slate-600 text-left space-y-3 font-medium">
+                            <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-0.5">•</span> Bu sağlıklı mı yoksa sağlıksız mı bir durumdur?</li>
+                            <li class="flex items-start"><span class="text-emerald-500 mr-2 mt-0.5">•</span> Benim kişisel değerlerime uyuyor mu?</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="mt-12 bg-gradient-to-r from-purple-50 to-fuchsia-50 p-6 rounded-2xl border border-purple-100 text-center shadow-inner">
+                    <p class="text-purple-900 font-semibold text-lg">💡 "İçinde bulunduğunuz duruma daha yakından bakmak ve bu talebin hedeflerinize zarar verecek sağlıksız bir durum yaratıp yaratmayacağına karar vermek sizin elinizdedir."</p>
+                </div>
+
+                <div class="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-100 pt-6">
+                    <button onclick="showSection('intro')" class="text-slate-500 hover:text-slate-800 font-bold px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">← Keşfetme Bölümüne Dön</button>
+                    <button onclick="showSection('practice')" class="bg-gradient-to-r from-accent to-purple-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center">
+                        Senaryo Analizine Geç 
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: ALIŞTIRMA (SENARYOLAR) -->
+        <section id="section-practice" class="hidden-section fade-in">
+            <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 relative overflow-hidden mb-8">
+                
+                <!-- Timer & Header -->
+                <div class="flex justify-between items-start mb-8 pb-6 border-b border-slate-100">
+                    <div class="flex items-center space-x-4">
+                        <div class="bg-slate-50 rounded-xl p-2.5 flex items-center space-x-3 border border-slate-200 shadow-sm" id="timer-box-practice">
+                            <div class="text-center px-2">
+                                <span class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kalan Süre</span>
+                                <span id="timer-display-practice" class="text-2xl font-mono font-extrabold text-personal">15:00</span>
+                            </div>
+                            <div class="flex flex-col space-y-1.5 border-l border-slate-200 pl-3">
+                                <div class="flex space-x-1">
+                                    <button onclick="adjustTimer('practice', 1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition">▲</button>
+                                    <button onclick="adjustTimer('practice', -1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition">▼</button>
+                                </div>
+                                <button onclick="toggleTimer('practice')" id="timer-btn-practice" class="bg-personal text-white w-full py-1 rounded-md text-xs font-bold hover:bg-orange-600 shadow-sm transition">Başlat</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-orange-100 text-orange-700 px-4 py-1.5 rounded-full text-xs font-extrabold tracking-widest uppercase inline-block mb-2 shadow-sm">Bölüm 3: Alıştırma</span>
+                        <div class="hidden md:flex bg-white text-slate-500 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 shadow-sm items-center justify-end">
+                            <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Öğrenci Sayfa: 3.3
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mb-8">
+                    <h2 class="text-3xl font-heading font-extrabold text-slate-800 mb-2">NDS ile Senaryo Analizi</h2>
+                    <p class="text-slate-500 text-lg">Aşağıdaki senaryoları inceleyin ve her biri için "Netleştirin, Düşünün, Seçim Yapın" tekniğini uygulayarak arkadaşlığın durumunu grupça değerlendirin.</p>
+                </div>
+
+                <div class="flex flex-col lg:flex-row gap-8">
+                    
+                    <!-- Sidebar Selector -->
+                    <div class="w-full lg:w-1/3 flex flex-col space-y-3 custom-scrollbar overflow-y-auto max-h-[500px] pr-2">
+                        <div class="flex items-center space-x-2 mb-2">
+                            <span class="bg-slate-800 text-white w-6 h-6 flex items-center justify-center rounded-md text-xs font-bold shadow">📁</span>
+                            <p class="text-sm text-slate-500 font-bold uppercase tracking-wider">Örnek Vakalar</p>
+                        </div>
+                        
+                        <button onclick="selectScenario(1, this)" class="scenario-btn text-left p-5 rounded-2xl border-2 border-slate-100 bg-white hover:border-personal hover:shadow-md transition-all group relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-personal transition-colors indicator"></div>
+                            <span class="font-heading font-bold text-lg text-slate-800 group-hover:text-personal block mb-1">Senaryo 1</span>
+                            <span class="text-sm text-slate-500 line-clamp-2">Hırsızlık ve Davet...</span>
+                        </button>
+                        
+                        <button onclick="selectScenario(2, this)" class="scenario-btn text-left p-5 rounded-2xl border-2 border-slate-100 bg-white hover:border-personal hover:shadow-md transition-all group relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-personal transition-colors indicator"></div>
+                            <span class="font-heading font-bold text-lg text-slate-800 group-hover:text-personal block mb-1">Senaryo 2</span>
+                            <span class="text-sm text-slate-500 line-clamp-2">Yeni Öğrenciyle Alay Etmek...</span>
+                        </button>
+                        
+                        <button onclick="selectScenario(3, this)" class="scenario-btn text-left p-5 rounded-2xl border-2 border-slate-100 bg-white hover:border-personal hover:shadow-md transition-all group relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-personal transition-colors indicator"></div>
+                            <span class="font-heading font-bold text-lg text-slate-800 group-hover:text-personal block mb-1">Senaryo 3</span>
+                            <span class="text-sm text-slate-500 line-clamp-2">Sınavda Kopya İsteği...</span>
+                        </button>
+                        
+                        <button onclick="selectScenario(4, this)" class="scenario-btn text-left p-5 rounded-2xl border-2 border-slate-100 bg-white hover:border-personal hover:shadow-md transition-all group relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-1.5 h-full bg-slate-200 group-hover:bg-personal transition-colors indicator"></div>
+                            <span class="font-heading font-bold text-lg text-slate-800 group-hover:text-personal block mb-1">Senaryo 4</span>
+                            <span class="text-sm text-slate-500 line-clamp-2">Aileye Yalan Söylemek...</span>
+                        </button>
+                    </div>
+
+                    <!-- The Output -->
+                    <div class="w-full lg:w-2/3">
+                        <div class="bg-slate-50 border-2 border-slate-200 rounded-3xl p-8 h-full min-h-[400px] shadow-inner relative flex flex-col">
+                            
+                            <!-- Placeholder State -->
+                            <div id="exercise-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-400 z-10">
+                                <div class="bg-white p-6 rounded-full shadow-sm mb-4">
+                                    <svg class="w-16 h-16 opacity-40 text-personal" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg>
+                                </div>
+                                <p class="text-lg font-medium">Analiz etmek için soldan bir senaryo seçin.</p>
+                            </div>
+
+                            <!-- Content State -->
+                            <div id="exercise-content" class="hidden fade-in flex-grow flex flex-col">
+                                <div class="flex items-center space-x-3 mb-6 border-b border-slate-200 pb-4">
+                                    <span class="bg-personal text-white px-3 py-1 rounded-lg text-xs font-bold tracking-wider uppercase shadow-sm">Vaka Analizi</span>
+                                    <h3 id="ex-title" class="text-2xl font-heading font-extrabold text-slate-800"></h3>
+                                </div>
+                                
+                                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 mb-8 relative">
+                                    <div class="absolute -left-2 top-6 w-1 h-12 bg-personal rounded-r-md"></div>
+                                    <p id="ex-desc" class="text-xl text-slate-700 font-serif leading-relaxed italic"></p>
+                                </div>
+                                
+                                <div class="bg-gradient-to-br from-slate-800 to-slate-900 rounded-2xl p-6 shadow-lg text-white mt-auto">
+                                    <h4 class="font-bold text-personal mb-4 flex items-center text-lg"><span class="mr-2">💬</span> Grupça Tartışın:</h4>
+                                    <ul class="list-none space-y-4">
+                                        <li class="flex items-start bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
+                                            <span class="bg-blue-500/20 text-blue-400 p-2 rounded-lg mr-4 mt-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg></span> 
+                                            <div><strong class="text-blue-400 block mb-1">Netleştirin:</strong> <span class="text-slate-300">Sizden tam olarak ne isteniyor?</span></div>
+                                        </li>
+                                        <li class="flex items-start bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
+                                            <span class="bg-amber-500/20 text-amber-400 p-2 rounded-lg mr-4 mt-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"></path></svg></span> 
+                                            <div><strong class="text-amber-400 block mb-1">Düşünün:</strong> <span class="text-slate-300">Evet/Hayır derseniz sonuçları ne olur? Kimler etkilenir?</span></div>
+                                        </li>
+                                        <li class="flex items-start bg-slate-800/50 p-3 rounded-xl border border-slate-700/50">
+                                            <span class="bg-emerald-500/20 text-emerald-400 p-2 rounded-lg mr-4 mt-0.5"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path></svg></span> 
+                                            <div><strong class="text-emerald-400 block mb-1">Seçim Yapın:</strong> <span class="text-slate-300">Bu durum, arkadaşınızın sahip olduğu sağlıklı/sağlıksız nitelikler hakkında ne söylüyor? Güvendiğiniz bir yetişkin bu duruma ne nasihat verirdi?</span></div>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Hidden Conclusion Message -->
+                <div class="mt-10 border-t border-slate-100 pt-8 flex flex-col items-center">
+                    <button onclick="toggleContent('practice-conclusion', this)" class="bg-white border-2 border-personal text-personal hover:bg-personal hover:text-white px-8 py-3 rounded-full font-bold shadow transition-all flex items-center space-x-2">
+                        <span class="text-xl">💭</span><span>Ekstra Tartışma Sorusu</span>
+                    </button>
+                    <div id="practice-conclusion" class="reveal-content mt-6 w-full max-w-3xl">
+                        <div class="bg-gradient-to-r from-amber-100 to-orange-100 rounded-2xl p-8 border border-amber-200 text-center shadow-lg">
+                            <div class="w-12 h-12 bg-white rounded-full flex items-center justify-center text-amber-500 mx-auto mb-4 shadow text-2xl font-bold">?</div>
+                            <p class="text-amber-900 text-xl font-medium leading-relaxed">
+                                "Bir arkadaşlık ilişkisi sağlıklı olmaktan çıkıp sağlıksız olabilir mi? Ya da tersi olabilir mi? Bazen arkadaşlarınıza <strong class="bg-white px-2 py-0.5 rounded text-danger">'HAYIR'</strong> demeniz gereken zamanlar olabileceğini unutmayın."
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="mt-10 flex flex-col sm:flex-row justify-between items-center gap-4 border-t border-slate-100 pt-6">
+                    <button onclick="showSection('method')" class="text-slate-500 hover:text-slate-800 font-bold px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors">← NDS Tekniğine Dön</button>
+                    <button onclick="showSection('exit')" class="bg-slate-800 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl hover:bg-slate-900 transition-all flex items-center">
+                        Dersi Bitir & Çıkış Kartı 
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: KAPANIŞ VE DEĞERLENDİRME -->
+        <section id="section-exit" class="hidden-section fade-in">
+            <div class="bg-white rounded-3xl shadow-xl p-8 border-t-8 border-slate-800 relative overflow-hidden">
+                <div class="absolute -top-32 -left-32 w-64 h-64 bg-slate-100 rounded-full mix-blend-multiply opacity-50"></div>
+                
+                <div class="flex justify-between items-start mb-8 pb-6 border-b border-slate-100 relative z-10">
+                     <div class="bg-slate-50 rounded-xl p-2.5 flex items-center space-x-3 border border-slate-200 shadow-sm" id="timer-box-exit">
+                        <div class="text-center px-2">
+                            <span class="block text-[10px] text-slate-400 font-bold uppercase tracking-wider">Kalan Süre</span>
+                            <span id="timer-display-exit" class="text-2xl font-mono font-extrabold text-slate-800">05:00</span>
+                        </div>
+                        <div class="flex flex-col space-y-1.5 border-l border-slate-200 pl-3">
+                            <div class="flex space-x-1">
+                                <button onclick="adjustTimer('exit', 1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition">▲</button>
+                                <button onclick="adjustTimer('exit', -1)" class="bg-white hover:bg-slate-100 text-slate-600 w-6 h-6 rounded-md text-xs shadow-sm border border-slate-200 flex items-center justify-center transition">▼</button>
+                            </div>
+                            <button onclick="toggleTimer('exit')" id="timer-btn-exit" class="bg-slate-800 text-white w-full py-1 rounded-md text-xs font-bold hover:bg-black shadow-sm transition">Başlat</button>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="bg-slate-100 text-slate-600 px-3 py-1.5 rounded-lg text-xs font-bold border border-slate-200 shadow-sm inline-flex items-center">
+                            <svg class="w-4 h-4 mr-2 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path></svg>
+                            Yansıma Eki: 3.3.3
+                        </div>
+                    </div>
+                </div>
+
+                <div class="text-center mb-12 relative z-10">
+                    <span class="inline-block bg-slate-100 text-slate-600 px-4 py-1 rounded-full text-sm font-bold tracking-widest mb-3">DEĞERLENDİRME</span>
+                    <h2 class="text-4xl font-heading font-extrabold text-slate-900 mb-3">Çıkış Kartı</h2>
+                    <p class="text-slate-500 text-lg max-w-2xl mx-auto">Bugünkü dersi özetlemek için aşağıdaki soruları defterinize yazın ve cevaplarınızı sınıfla tartışın.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 relative z-10">
+                    <!-- Q1 -->
+                    <div class="bg-white rounded-2xl p-8 text-center border-2 border-dashed border-blue-200 shadow-sm hover:shadow-xl hover:border-blue-400 transition-all group relative">
+                        <div class="absolute -top-4 -right-4 w-10 h-10 bg-f1f5f9 rounded-full border-b-2 border-l-2 border-blue-200 group-hover:border-blue-400 transition-colors"></div>
+                        <div class="absolute -bottom-4 -left-4 w-10 h-10 bg-f1f5f9 rounded-full border-t-2 border-r-2 border-blue-200 group-hover:border-blue-400 transition-colors"></div>
+                        <div class="w-14 h-14 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xl font-black mx-auto mb-5">1</div>
+                        <h3 class="text-2xl font-heading font-extrabold text-blue-900 mb-3">NE?</h3>
+                        <p class="text-slate-600 font-medium">Bir arkadaşlık ilişkisinde değer verdiğiniz <strong class="text-blue-600 bg-blue-50 px-1 rounded">üç sağlıklı nitelik</strong> nedir?</p>
+                    </div>
+                    <!-- Q2 -->
+                    <div class="bg-white rounded-2xl p-8 text-center border-2 border-dashed border-amber-200 shadow-sm hover:shadow-xl hover:border-amber-400 transition-all group relative">
+                        <div class="absolute -top-4 -right-4 w-10 h-10 bg-f1f5f9 rounded-full border-b-2 border-l-2 border-amber-200 group-hover:border-amber-400 transition-colors"></div>
+                        <div class="absolute -bottom-4 -left-4 w-10 h-10 bg-f1f5f9 rounded-full border-t-2 border-r-2 border-amber-200 group-hover:border-amber-400 transition-colors"></div>
+                        <div class="w-14 h-14 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xl font-black mx-auto mb-5">2</div>
+                        <h3 class="text-2xl font-heading font-extrabold text-amber-900 mb-3">NE OLDU?</h3>
+                        <p class="text-slate-600 font-medium">Bir olayın içinde yer almadan önce <strong class="text-amber-600 bg-amber-50 px-1 rounded">durumu doğru değerlendirmenin</strong> yararı nedir?</p>
+                    </div>
+                    <!-- Q3 -->
+                    <div class="bg-white rounded-2xl p-8 text-center border-2 border-dashed border-emerald-200 shadow-sm hover:shadow-xl hover:border-emerald-400 transition-all group relative">
+                        <div class="absolute -top-4 -right-4 w-10 h-10 bg-f1f5f9 rounded-full border-b-2 border-l-2 border-emerald-200 group-hover:border-emerald-400 transition-colors"></div>
+                        <div class="absolute -bottom-4 -left-4 w-10 h-10 bg-f1f5f9 rounded-full border-t-2 border-r-2 border-emerald-200 group-hover:border-emerald-400 transition-colors"></div>
+                        <div class="w-14 h-14 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center text-xl font-black mx-auto mb-5">3</div>
+                        <h3 class="text-2xl font-heading font-extrabold text-emerald-900 mb-3">ŞİMDİ NE OLACAK?</h3>
+                        <p class="text-slate-600 font-medium">Daha iyi bir arkadaş olabilmek için <strong class="text-emerald-600 bg-emerald-50 px-1 rounded">NDS tekniğini</strong> hayatınızda nasıl uygulayabilirsiniz?</p>
+                    </div>
+                </div>
+
+                <div class="mt-14 text-center">
+                    <button onclick="location.reload()" class="inline-flex items-center text-slate-400 hover:text-slate-700 font-bold transition-colors group">
+                        <svg class="w-5 h-5 mr-2 transform group-hover:-rotate-180 transition-transform duration-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                        Sunumu Başa Sar
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="mt-auto py-8 text-center text-slate-400 text-sm font-medium">
+        <p>&copy; 2024 Sosyal Gelişim Ders Modülü | Sağlıklı İletişim</p>
+    </footer>
+
+    <script>
+        // --- GLOBAL FUNCTION DEFINITIONS ---
+
+        window.showSection = function(sectionId) {
+            // Hide all
+            document.querySelectorAll('section').forEach(sec => {
+                sec.classList.add('hidden-section');
+            });
+            // Show target
+            const targetSection = document.getElementById('section-' + sectionId);
+            if(targetSection) {
+                targetSection.classList.remove('hidden-section');
+            }
+            
+            // Update Nav styling
+            document.querySelectorAll('#nav-container button').forEach(btn => {
+                // Inactive state
+                btn.className = 'px-5 py-2 rounded-full text-sm font-bold text-slate-500 hover:bg-white hover:text-slate-800 transition-all whitespace-nowrap';
+            });
+            
+            // Active state
+            const activeBtn = document.getElementById('nav-' + sectionId);
+            if(activeBtn) {
+                activeBtn.className = 'px-5 py-2 rounded-full text-sm font-bold text-white bg-gradient-to-r from-primary to-accent shadow-md transition-all whitespace-nowrap';
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+
+        window.toggleContent = function(id, btn) {
+            const el = document.getElementById(id);
+            if (el.classList.contains('show')) {
+                el.classList.remove('show');
+            } else {
+                el.classList.add('show');
+            }
+        };
+
+        // Scenario Selection
+        const exScenarios = [
+            { id: 1, title: "Senaryo 1: Gizli İstek", desc: "En iyi arkadaşınızın cebine babasının cüzdanından çaldığı parayı gizlice koyduğunu gördünüz. Bununla konsere gitmek istediğini söylüyor ve sizi de davet ediyor." },
+            { id: 2, title: "Senaryo 2: Gruba Girme Baskısı", desc: "Çok popüler bir grup öğrenci, sizin yanınıza gelip sınıftaki yeni öğrenciyle alay etmenizi istiyor. Kabul ederseniz aralarına girebileceksiniz." },
+            { id: 3, title: "Senaryo 3: Sınav Tehlikesi", desc: "Sınav sırasında arka sıradaki yakın arkadaşınız sizden cevapları göstermenizi istiyor. Yakalanırsanız ikiniz de sıfır alacaksınız." },
+            { id: 4, title: "Senaryo 4: İzin Verilmeyen Parti", desc: "Arkadaşınız, ailenizin izin vermediği bir partiye gitmek için ailenize yalan söylemenizi ve onlarda kalacağınızı söylemenizi istiyor." }
+        ];
+
+        window.selectScenario = function(id, btnEl) {
+            const selected = exScenarios.find(c => c.id === id);
+            
+            // UI Switch
+            document.getElementById('exercise-placeholder').classList.add('hidden');
+            const contentDiv = document.getElementById('exercise-content');
+            contentDiv.classList.remove('hidden');
+            
+            // Re-trigger animation
+            contentDiv.classList.remove('fade-in');
+            void contentDiv.offsetWidth;
+            contentDiv.classList.add('fade-in');
+            
+            // Inject Data
+            document.getElementById('ex-title').innerText = selected.title;
+            document.getElementById('ex-desc').innerText = `"${selected.desc}"`;
+            
+            // Handle active button styles
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('ring-2', 'ring-personal', 'bg-orange-50', 'shadow-md', 'border-personal');
+                btn.classList.add('border-slate-100', 'bg-white');
+                const indicator = btn.querySelector('.indicator');
+                if(indicator) { indicator.classList.remove('bg-personal'); indicator.classList.add('bg-slate-200'); }
+            });
+            
+            btnEl.classList.add('ring-2', 'ring-personal', 'bg-orange-50', 'shadow-md', 'border-personal');
+            btnEl.classList.remove('border-slate-100', 'bg-white');
+            const activeIndicator = btnEl.querySelector('.indicator');
+            if(activeIndicator) { activeIndicator.classList.add('bg-personal'); activeIndicator.classList.remove('bg-slate-200'); }
+        };
+
+        // --- TIMER LOGIC ---
+        // Intro: 10m, Method: 10m, Practice: 15m, Exit: 5m -> Total 40 mins
+        const timerData = {
+            'intro': { total: 600, current: 600, interval: null, running: false },    
+            'method': { total: 600, current: 600, interval: null, running: false },   
+            'practice': { total: 900, current: 900, interval: null, running: false }, 
+            'exit': { total: 300, current: 300, interval: null, running: false }      
+        };
+
+        function formatTime(seconds) {
+            const m = Math.floor(seconds / 60);
+            const s = seconds % 60;
+            return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
+        }
+
+        function updateDisplay(id) {
+            const display = document.getElementById(`timer-display-${id}`);
+            const box = document.getElementById(`timer-box-${id}`);
+            if (display) {
+                display.innerText = formatTime(timerData[id].current);
+                if (timerData[id].current === 0) {
+                    box.classList.add('timer-finished');
+                } else {
+                    box.classList.remove('timer-finished');
+                }
+            }
+        }
+
+        window.adjustTimer = function(id, minutes) {
+            if (timerData[id].running) return;
+            const newTime = timerData[id].current + (minutes * 60);
+            if (newTime >= 0) {
+                timerData[id].current = newTime;
+                timerData[id].total = newTime;
+                updateDisplay(id);
+            }
+        };
+
+        window.toggleTimer = function(id) {
+            const btn = document.getElementById(`timer-btn-${id}`);
+            if (!timerData[id].running) {
+                timerData[id].running = true;
+                btn.innerText = "Durdur";
+                btn.classList.replace("bg-primary", "bg-danger");
+                btn.classList.replace("hover:bg-blue-700", "hover:bg-red-700");
+                btn.classList.replace("bg-accent", "bg-danger");
+                btn.classList.replace("hover:bg-purple-700", "hover:bg-red-700");
+                btn.classList.replace("bg-personal", "bg-danger");
+                btn.classList.replace("hover:bg-orange-600", "hover:bg-red-700");
+                btn.classList.replace("bg-slate-800", "bg-danger");
+                btn.classList.replace("hover:bg-black", "hover:bg-red-700");
+                
+                timerData[id].interval = setInterval(() => {
+                    if (timerData[id].current > 0) {
+                        timerData[id].current--;
+                        updateDisplay(id);
+                    } else {
+                        clearInterval(timerData[id].interval);
+                        timerData[id].running = false;
+                        btn.innerText = "Bitti";
+                        updateDisplay(id);
+                    }
+                }, 1000);
+            } else {
+                clearInterval(timerData[id].interval);
+                timerData[id].running = false;
+                btn.innerText = "Devam Et";
+                btn.classList.replace("bg-danger", id === 'intro' ? 'bg-primary' : id === 'method' ? 'bg-accent' : id === 'practice' ? 'bg-personal' : 'bg-slate-800');
+            }
+        };
+
+        // Initialize App
+        document.addEventListener('DOMContentLoaded', function() {
+            window.showSection('intro');
+            Object.keys(timerData).forEach(key => updateDisplay(key));
+        });
+
+    </script>
+</body>
+</html>
