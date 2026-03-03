@@ -69,7 +69,7 @@
         .timer-finished {
             animation: pulse-danger 1.5s infinite;
         }
-        /* Custom Scrollbar for Scenarios */
+        /* Custom Scrollbar */
         .custom-scrollbar::-webkit-scrollbar {
             width: 6px;
         }
@@ -84,15 +84,22 @@
         .custom-scrollbar::-webkit-scrollbar-thumb:hover {
             background: #94a3b8; 
         }
+        /* Drag and Drop Visuals */
+        .drop-zone {
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .drop-zone.drag-over {
+            background-color: rgba(255, 255, 255, 0.8);
+            border-color: #94a3b8;
+            border-style: dashed;
+        }
     </style>
 </head>
 <body class="text-slate-800 min-h-screen flex flex-col">
 
     <!-- Header -->
     <header class="bg-white/80 backdrop-blur-md shadow-sm border-b border-slate-200 sticky top-0 z-50">
-        <!-- Colorful Top Accent Bar -->
         <div class="h-1.5 w-full bg-gradient-to-r from-primary via-accent to-secondary"></div>
-        
         <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="flex items-center space-x-4">
                 <div class="bg-gradient-to-br from-primary to-blue-800 text-white p-2.5 rounded-xl shadow-md">
@@ -119,10 +126,9 @@
     <!-- Main Content -->
     <main class="flex-grow container mx-auto px-4 py-8 relative">
 
-        <!-- SECTION 1: KEŞFETME -->
+        <!-- SECTION 1: KEŞFETME (DRAG & DROP) -->
         <section id="section-intro" class="fade-in">
             <div class="bg-white rounded-3xl shadow-xl p-8 border border-slate-100 relative overflow-hidden mb-8">
-                <!-- Decorative background shape -->
                 <div class="absolute -top-24 -right-24 w-48 h-48 bg-blue-50 rounded-full mix-blend-multiply filter blur-2xl opacity-70"></div>
                 
                 <!-- Timer & Code -->
@@ -154,51 +160,95 @@
 
                 <div class="mb-8 relative z-10 text-center max-w-3xl mx-auto">
                     <h2 class="text-4xl font-heading font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-slate-800 to-slate-500 mb-4">Sağlıklı ve Sağlıksız İlişkiler</h2>
-                    <p class="text-slate-500 text-lg">Hangi davranışlar bir ilişkiyi sağlıklı, hangi davranışlar sağlıksız yapar? Aralarındaki farkları inceleyelim.</p>
+                    <p class="text-slate-500 text-lg">Aşağıdaki davranış havuzunda yer alan özellikleri sınıfça tartışarak ait oldukları kutuya sürükleyip bırakın.</p>
                 </div>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10">
-                    <!-- Sağlıklı İlişki -->
-                    <div class="bg-gradient-to-br from-white to-emerald-50 p-8 rounded-3xl border border-emerald-100 shadow-lg relative transform transition duration-500 hover:-translate-y-1 hover:shadow-xl">
+                <!-- THE DRAG POOL -->
+                <div class="mb-10 relative z-10">
+                    <div class="flex items-center mb-3">
+                        <span class="text-2xl mr-2">🧩</span>
+                        <h3 class="font-heading font-bold text-slate-700 text-xl">Davranış Havuzu</h3>
+                    </div>
+                    <div id="pool-zone" class="drop-zone flex flex-wrap gap-3 p-6 bg-slate-50 rounded-2xl border-2 border-dashed border-slate-300 min-h-[120px] items-center justify-center transition-colors" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">
+                        
+                        <div id="trait-1" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Birbirine güven ve saygı duyar.</span>
+                        </div>
+                        <div id="trait-2" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Emniyette, güvende ve rahat hissettirir.</span>
+                        </div>
+                        <div id="trait-3" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Açık ve net bir iletişimi vardır.</span>
+                        </div>
+                        <div id="trait-4" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Olumlu hedefler oluşturmaya teşvik eder.</span>
+                        </div>
+                        <div id="trait-5" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Riskli konularda sağlıklı kararlar verir.</span>
+                        </div>
+                        <div id="trait-6" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Diğerini kontrol ve yönetmek ister.</span>
+                        </div>
+                        <div id="trait-7" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Sürekli diğerini kötü ve yetersiz hissettirir.</span>
+                        </div>
+                        <div id="trait-8" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Kendi isteklerini dikte ettirir.</span>
+                        </div>
+                        <div id="trait-9" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Aşırı kıskanç ve fazlasıyla sahiplenicidir.</span>
+                        </div>
+                        <div id="trait-10" draggable="true" ondragstart="drag(event)" class="cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95">
+                            <span class="icon-span mr-2 text-slate-400">➡️</span> <span>Riskli ve zararlı eylemlere dahil olmaya zorlar.</span>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-10 relative z-10">
+                    
+                    <!-- Sağlıklı İlişki Drop Zone -->
+                    <div class="bg-gradient-to-br from-white to-emerald-50 p-6 rounded-3xl border-2 border-emerald-100 shadow-md relative flex flex-col">
                         <div class="absolute -top-6 right-8 w-16 h-16 bg-gradient-to-br from-emerald-400 to-secondary text-white rounded-2xl shadow-lg flex items-center justify-center text-3xl transform rotate-3">👍</div>
                         <h3 class="text-2xl font-heading font-extrabold text-emerald-700 mb-6 flex items-center">
                             <span class="bg-emerald-100 text-emerald-600 p-2 rounded-lg mr-3">✨</span> Sağlıklı İlişki
                         </h3>
-                        <p class="font-bold text-slate-700 mb-4 bg-white/60 py-1 px-3 rounded-md inline-block">İki kişi de:</p>
-                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirlerine güven ve saygı duyar, destek olur.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Emniyette, kendini güvende ve rahat hisseder.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirlerine asla şiddet uygulamaz.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Alay etmez, isim takmaz. Birlikte olmaktan keyif alır.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirinin hayatı, dersleri, arkadaşları, ailesi ile ilgilenir.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Açık ve net bir iletişimi vardır.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Riskli konularda (madde vb.) sağlıklı kararlar verir.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-emerald-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg> <span>Birbirini olumlu hedefler oluşturmaya teşvik eder.</span></li>
-                        </ul>
+                        
+                        <div id="healthy-zone" class="drop-zone flex-grow flex flex-col gap-3 min-h-[250px] p-2 rounded-xl transition-colors" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">
+                            <!-- Static Initial Examples -->
+                            <div class="bg-white border border-emerald-200 shadow-sm px-4 py-3 rounded-xl text-sm font-bold text-emerald-800 flex items-center w-full">
+                                <span class="icon-span mr-2 text-emerald-500">✅</span> <span>Birbirlerine asla şiddet uygulamaz.</span>
+                            </div>
+                            <div class="bg-white border border-emerald-200 shadow-sm px-4 py-3 rounded-xl text-sm font-bold text-emerald-800 flex items-center w-full">
+                                <span class="icon-span mr-2 text-emerald-500">✅</span> <span>Alay etmez, isim takmaz. Birlikte keyif alır.</span>
+                            </div>
+                            <!-- Dropped items will append here -->
+                        </div>
                     </div>
 
-                    <!-- Sağlıksız İlişki -->
-                    <div class="bg-gradient-to-br from-white to-red-50 p-8 rounded-3xl border border-red-100 shadow-lg relative transform transition duration-500 hover:-translate-y-1 hover:shadow-xl">
+                    <!-- Sağlıksız İlişki Drop Zone -->
+                    <div class="bg-gradient-to-br from-white to-red-50 p-6 rounded-3xl border-2 border-red-100 shadow-md relative flex flex-col">
                         <div class="absolute -top-6 right-8 w-16 h-16 bg-gradient-to-br from-red-400 to-danger text-white rounded-2xl shadow-lg flex items-center justify-center text-3xl transform -rotate-3">👎</div>
                         <h3 class="text-2xl font-heading font-extrabold text-red-700 mb-6 flex items-center">
                             <span class="bg-red-100 text-red-600 p-2 rounded-lg mr-3">⚠️</span> Sağlıksız İlişki
                         </h3>
-                        <p class="font-bold text-slate-700 mb-4 bg-white/60 py-1 px-3 rounded-md inline-block">Bir veya daha çok kişi:</p>
-                        <ul class="space-y-3 text-sm text-slate-700 font-medium">
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Diğerini kontrol ve yönetmek ister.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Sürekli diğerini kötü ve yetersiz hissettirir.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Diğerini dinlemez, özel hayatı ile ilgilenmez.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Kendi isteklerini ve kurallarını dikte ettirir.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Aşırı kıskançtır ve fazlasıyla sahiplenicidir.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Başkalarını kıskanır ve acımasızca eleştirir.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>İter, vurur, cisimlere veya çevreye zarar verir.</span></li>
-                            <li class="flex items-start"><svg class="w-5 h-5 text-red-500 mr-2 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg> <span>Riskli ve zararlı eylemlere dahil olmaya zorlar.</span></li>
-                        </ul>
+                        
+                        <div id="unhealthy-zone" class="drop-zone flex-grow flex flex-col gap-3 min-h-[250px] p-2 rounded-xl transition-colors" ondragover="allowDrop(event)" ondragleave="dragLeave(event)" ondrop="drop(event)">
+                            <!-- Static Initial Examples -->
+                            <div class="bg-white border border-red-200 shadow-sm px-4 py-3 rounded-xl text-sm font-bold text-red-800 flex items-center w-full">
+                                <span class="icon-span mr-2 text-red-500">❌</span> <span>Diğerini dinlemez, özel hayatıyla ilgilenmez.</span>
+                            </div>
+                            <div class="bg-white border border-red-200 shadow-sm px-4 py-3 rounded-xl text-sm font-bold text-red-800 flex items-center w-full">
+                                <span class="icon-span mr-2 text-red-500">❌</span> <span>İter, vurur, cisimlere veya çevreye zarar verir.</span>
+                            </div>
+                            <!-- Dropped items will append here -->
+                        </div>
                     </div>
+
                 </div>
 
                 <!-- Discussion Guide -->
-                <div class="mt-10 bg-gradient-to-r from-amber-50 to-yellow-100 rounded-2xl p-8 border border-amber-200 shadow-sm relative">
+                <div class="mt-10 bg-gradient-to-r from-amber-50 to-yellow-100 rounded-2xl p-8 border border-amber-200 shadow-sm relative z-10">
                     <div class="absolute -left-3 top-8 w-6 h-12 bg-amber-400 rounded-r-lg"></div>
                     <div class="flex items-center mb-5 ml-4">
                         <div class="bg-amber-200 p-2 rounded-lg mr-3 shadow-sm">
@@ -209,7 +259,7 @@
                     <ul class="space-y-4 text-slate-800 ml-4 font-medium text-lg">
                         <li class="flex items-start">
                             <span class="flex-shrink-0 bg-red-100 text-danger text-xs font-bold px-2 py-1 rounded mr-3 mt-0.5 shadow-sm">SORU</span>
-                            <span>Sizin kendi düşünceleriniz ile buradaki tabloda yazanlar arasında ne gibi farklar var?</span>
+                            <span>Listeyi oluştururken en çok hangi maddede zorlandınız veya farklı düşündünüz?</span>
                         </li>
                         <li class="flex items-start">
                             <span class="flex-shrink-0 bg-red-100 text-danger text-xs font-bold px-2 py-1 rounded mr-3 mt-0.5 shadow-sm">SORU</span>
@@ -219,7 +269,7 @@
                 </div>
 
                 <!-- Hidden Conclusion Message -->
-                <div class="mt-10 border-t border-slate-100 pt-8 flex flex-col items-center">
+                <div class="mt-10 border-t border-slate-100 pt-8 flex flex-col items-center relative z-10">
                     <button onclick="toggleContent('intro-conclusion', this)" class="group bg-white border-2 border-primary text-primary px-8 py-3 rounded-full font-bold shadow hover:bg-primary hover:text-white transition-all flex items-center space-x-3">
                         <span class="text-xl group-hover:scale-110 transition-transform">👁️</span>
                         <span>Öğretmen Notunu Göster</span>
@@ -234,7 +284,7 @@
                     </div>
                 </div>
 
-                <div class="mt-10 flex justify-end">
+                <div class="mt-10 flex justify-end relative z-10">
                     <button onclick="showSection('method')" class="bg-gradient-to-r from-primary to-blue-600 text-white px-8 py-3.5 rounded-xl font-bold shadow-lg hover:shadow-xl hover:translate-y-[-2px] transition-all flex items-center">
                         Sonraki Adım: NDS Tekniği 
                         <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
@@ -596,6 +646,50 @@
                 el.classList.add('show');
             }
         };
+
+        // Drag and Drop Logic
+        window.allowDrop = function(ev) {
+            ev.preventDefault();
+            if (ev.target.closest('.drop-zone')) {
+                ev.target.closest('.drop-zone').classList.add('drag-over');
+            }
+        }
+
+        window.dragLeave = function(ev) {
+            if (ev.target.closest('.drop-zone')) {
+                ev.target.closest('.drop-zone').classList.remove('drag-over');
+            }
+        }
+
+        window.drag = function(ev) {
+            ev.dataTransfer.setData("text", ev.target.id);
+        }
+
+        window.drop = function(ev) {
+            ev.preventDefault();
+            var data = ev.dataTransfer.getData("text");
+            var draggedEl = document.getElementById(data);
+            var dropZone = ev.target.closest('.drop-zone');
+            
+            if (dropZone && draggedEl) {
+                dropZone.classList.remove('drag-over');
+                dropZone.appendChild(draggedEl);
+                
+                // Style adjustments based on drop zone
+                let iconSpan = draggedEl.querySelector('.icon-span');
+                if(dropZone.id === 'healthy-zone') {
+                    draggedEl.className = "cursor-grab active:cursor-grabbing bg-white border border-emerald-200 shadow-sm px-4 py-3 rounded-xl text-sm font-bold text-emerald-800 flex items-center hover:bg-emerald-50 transition-all w-full";
+                    if(iconSpan) iconSpan.innerHTML = '<svg class="w-5 h-5 text-emerald-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>';
+                } else if(dropZone.id === 'unhealthy-zone') {
+                    draggedEl.className = "cursor-grab active:cursor-grabbing bg-white border border-red-200 shadow-sm px-4 py-3 rounded-xl text-sm font-bold text-red-800 flex items-center hover:bg-red-50 transition-all w-full";
+                    if(iconSpan) iconSpan.innerHTML = '<svg class="w-5 h-5 text-red-500 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>';
+                } else {
+                    // Back to pool
+                    draggedEl.className = "cursor-grab active:cursor-grabbing bg-white border border-slate-300 shadow-sm px-4 py-2 rounded-xl text-sm font-bold text-slate-700 flex items-center hover:bg-slate-100 transition-all transform hover:scale-105 active:scale-95";
+                    if(iconSpan) iconSpan.innerHTML = '➡️';
+                }
+            }
+        }
 
         // Scenario Selection
         const exScenarios = [
